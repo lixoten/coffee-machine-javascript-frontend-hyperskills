@@ -12,19 +12,23 @@ const coffeeMachine = {
         cups: 9,
         money: 550,
     },
-    espresso :  {
+    // Changed to use inputed number too represent product choice insteat of literal word
+    // espresso :  {
+    1 :  {
         milk: 0,
         water: 250,
         beans: 16,
         price: 4
     },
-    latte :  {
+    // latte :  {
+    2 :  {
         milk: 75,
         water: 350,
         beans: 20,
         price: 7
     },
-    cappuccino :  {
+    // cappuccino :  {
+    3 :  {
         milk: 100,
         water: 200,
         beans: 12,
@@ -34,94 +38,73 @@ const coffeeMachine = {
         // NOTE: Multi-line string
         console.log(`
 The coffee machine has:
-${coffeeMachine['resources']['water']} ml of water
-${coffeeMachine.resources.milk} ml of milk
+${this['resources']['water']} ml of water
+${this.resources.milk} ml of milk
 ${this.resources.beans} g of coffee beans
 ${this.resources.cups} disposable cups
 $${this.resources.money} of money
 `);
     },
     buy: function () { // NOTE: Function Expression
-        console.log("\nWhat do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino:");
         let enoughResources = 0;
-        switch (Number(input())) {
-            case 1 :
-                enoughResources = canWeMakeIt(this.resources.water, this.espresso.water,
-                    this.resources.milk, this.espresso.milk,
-                    this.resources.beans, this.espresso.beans, 1);
+        // let choice = "";
 
-                if (!enoughResources) {
-                    break;
-                }
+        let choice = (input("\nWhat do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino:\n"));
+        // switch (input("\nWhat do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino:\n")) {
+        //     case "back" :
+        //         choice = "back";
+        //
+        //         break;
+        //     case "1" :
+        //         choice = "espresso";
+        //
+        //         break;
+        //     case "2" :
+        //         choice = "latte";
+        //
+        //         break;
+        //     case "3" :
+        //         choice = "cappuccino";
+        //
+        //         break;
+        //     default:
+        //         break;
+        // }
 
-                // NOTE: Pay attention here, using objects "dot" to access array items (interchangable, this is better)
-                coffeeMachine.resources.water -= coffeeMachine['espresso']['water'];
-                coffeeMachine.resources.milk  -= coffeeMachine['espresso']['milk'];
-                // NOTE: The use of "this"
-                this.resources.beans -= coffeeMachine['espresso']['beans'];
-                this.resources.cups  -= 1;
-                this.resources.money += coffeeMachine['espresso']['price'];
-                break;
-            case 2 :
-                enoughResources = canWeMakeIt(this.resources.water, this.latte.water,
-                    this.resources.milk, this.latte.milk,
-                    this.resources.beans, this.latte.beans, 1);
+        if (choice === "back") return;
 
-                if (!enoughResources) {
-                    break;
-                }
+        enoughResources = canWeMakeIt(this.resources.water, this[choice].water,
+            this.resources.milk, this[choice].milk,
+            this.resources.beans, this[choice].beans, 1);
 
-                // NOTE: Pay attention here, using indexes to access array items (interchangable)
-                this['resources']['milk'] -= coffeeMachine['latte']['milk'];
-                coffeeMachine['resources']['water'] -= coffeeMachine['latte']['water'];
-                // NOTE: The use of "this".. BAD I think works but bad
-                this['resources']['beans'] -= coffeeMachine['latte']['beans'];
-                this['resources']['cups'] -= 1;
-                this['resources']['money'] += coffeeMachine['latte']['price'];
-                break;
-            case 3 :
-                enoughResources = canWeMakeIt(this.resources.water, this.cappuccino.water,
-                    this.resources.milk, this.cappuccino.milk,
-                    this.resources.beans, this.cappuccino.beans, 1);
-
-                if (!enoughResources) {
-                    break;
-                }
-
-                let coffeeChoice = "cappuccino";
-                // Note here.. placing the type in a variable, can lets us potentially remove this statements outside of switch, sinve it is done for all 3 coffees
-                this.resources.water -= coffeeMachine[coffeeChoice].water; // Note here...very flexible
-                this.resources.milk  -= coffeeMachine[coffeeChoice]['milk'];
-                this.resources.beans -= coffeeMachine[coffeeChoice]['beans'];
-                this.resources.cups  -= 1;
-                this.resources.money += coffeeMachine[coffeeChoice]['price'];
-                break;
-            default:
-                break;
+        if (enoughResources) {
+            // NOTE: Pay attention here, using indexes to access array items (interchangable)
+            coffeeMachine.resources.water -= coffeeMachine[choice]['water'];
+            // NOTE: Pay attention here, using objects "dot" to access array items (interchangable, this is better)
+            this.resources.milk  -= this[choice].milk;
+            // NOTE: The use of "this"
+            this.resources.beans -= this[choice].beans;
+            this.resources.cups  -= 1;
+            this.resources.money += this[choice].price;
         }
+
     },
     fill: function () { // NOTE: Function Expression
-        console.log(`\nWrite how many ml of water you want to add`);
-        this.resources.water += Number(input());
-        console.log(`\nWrite how many ml of milk you want to add::`);
-        this.resources.milk += Number(input());
-        console.log(`\nWrite how many grams of coffee beans you want to add:`);
-        this.resources.beans += Number(input());
-        console.log(`\nWrite how many disposable coffee cups you want to add:`);
-        this.resources.cups += Number(input());
-        console.log();
+        this.resources.water += Number(input(`\nWrite how many ml of water you want to add:\n`));
+        this.resources.milk += Number(input(`\nWrite how many ml of milk you want to add:\n`));
+        this.resources.beans += Number(input(`\nWrite how many grams of coffee beans you want to add:\n`));
+        this.resources.cups += Number(input(`\nWrite how many disposable coffee cups you want to add:\n`));
     },
     takeCash : takeCash = function () { // NOTE: Function Expression
-        console.log(`\nI gave you $${coffeeMachine.resources.money}\n`);
-        coffeeMachine['resources']['money'] = 0;
+        console.log(`\nI gave you $${this.resources.money}\n`);
+        this.resources.money = 0;
     }
 };
 
 let actionQuestion = ""
 
 do {
-    console.log("Write action (buy, fill, take, remaining, exit): ");
-    let actionQuestion = input();
+    actionQuestion = input("Write action (buy, fill, take, remaining, exit): \n");
     switch (actionQuestion) {
         case "b":
         case "buy":
@@ -145,7 +128,6 @@ do {
         case "k":
         case "back":
             break;
-        case "x":
         case "exit":
             break;
         default:
@@ -156,16 +138,14 @@ do {
         break;
     }
 
-} while (actionQuestion !== "exit")
-
+} while (actionQuestion !== "exit");
 
 function canWeMakeIt(waterSupply, waterRecipe,
                      milkSupply, milkRecipe,
                      beansSupply, beansRecipe, cupsNeeded) {
-    let result =
-        Math.floor(Math.min(waterSupply / waterRecipe,
-                            milkSupply /milkRecipe,
-                            beansSupply / beansRecipe));
+    let result = Math.floor(Math.min(waterSupply / waterRecipe,
+                                    milkSupply /milkRecipe,
+                                    beansSupply / beansRecipe));
 
     if (waterSupply < (waterRecipe * cupsNeeded)){
         console.log("Sorry, not enough water!\n")
