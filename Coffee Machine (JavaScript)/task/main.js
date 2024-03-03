@@ -1,4 +1,4 @@
-// Stage 5
+// Stage 6
 // Use "input()" to input a line from the user
 // Use "input(str)" to print some text before requesting input
 // You will need this in the following stages
